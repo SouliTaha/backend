@@ -15,5 +15,11 @@ Route::group([
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
+    Route::post('ResetPassword','ResetPasswordController@sendEmail');
+    Route::post('changepassword','ChangePasswordController@process');
+
+    Router::get('prodct','ProductController@getProduct');
+
+
 
 });
