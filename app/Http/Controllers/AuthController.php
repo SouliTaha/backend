@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SignUpRequest;
 use App\Models\User;
+use  Illuminate\http\Request;
 
 
 class AuthController extends Controller
@@ -17,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'signup']]);
+        $this->middleware('auth:api', ['except' => ['login', 'signup', ]]);
     }
 
     /**
@@ -26,7 +28,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login()
-    {
+    {   
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
@@ -34,6 +36,7 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    
     }
 
     public function signup(SignUpRequest $request)
@@ -73,6 +76,27 @@ class AuthController extends Controller
     {
         return $this->respondWithToken(auth()->refresh());
     }
+    
+    
+     /**
+     * Get the authenticated User.
+    
+     * @param  string $token
+
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userProfile(Request $request) {
+        $user = Auth::user();
+        $url = url('/uploads');
+        
+        return response()->json([
+            
+            "token"=>auth()->user(),
+            "path"=>$url
+        ]
+            
+        );
+    }
 
     /**
      * Get the token array structure.
@@ -87,8 +111,11 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()->name
+            'user' => auth()->user()->name,
+            'email'=> auth()->user()->email,
+            'avatar'=>auth()->user()->avatar
         ]);
     }
-  
+    
+   
 }

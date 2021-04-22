@@ -8,4 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Products extends Model
 {
     use HasFactory;
+      /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'price', 'color', 'user_id'
+    ];
+
+    public function user(){ 
+        return $this->belongsToMany('\App\Models\User');
+    }
+    
 }
